@@ -18,6 +18,10 @@ A comprehensive video analysis system that combines computer vision, object trac
 vision_llm_video_qa/
 ├── analyze_video.py          # Main analysis pipeline
 ├── create_viz.py            # Visualization generation
+├── visualize_tracking.py    # Basic people tracking visualization
+├── advanced_tracking.py     # Advanced tracking with better models
+├── demo_visualization.py    # Interactive demo script
+├── example.py               # Usage examples
 ├── data/                    # Sample data and results
 │   └── videoplayback.mp4    # Sample video
 ├── llm/                     # Language model integration
@@ -25,7 +29,9 @@ vision_llm_video_qa/
 │   └── ollama_analyzer.py   # Ollama LLM analyzer
 ├── models/                  # Pre-trained models
 │   └── detector/
-│       └── yolo11n-pose.pt  # YOLO pose estimation model
+│       ├── yolov8l.pt       # YOLOv8 Large detection model
+│       ├── yolov8l-pose.pt  # YOLOv8 Large pose model
+│       └── yolo11n-pose.pt  # YOLO nano pose model (backup)
 ├── vision/                  # Computer vision modules
 │   ├── __init__.py
 │   ├── detector_tracker.py  # Combined detection & tracking
@@ -93,6 +99,57 @@ result = analyze_video(
 print(result)
 ```
 
+### People Tracking Visualization
+
+#### Basic Tracking
+```python
+from visualize_tracking import PeopleTrackingVisualizer
+
+# Initialize visualizer
+visualizer = PeopleTrackingVisualizer(device="cpu")
+
+# Process video with tracking and pose estimation
+visualizer.process_video(
+    video_path="path/to/your/video.mp4",
+    output_path="output_tracking.mp4",
+    max_frames=300
+)
+
+# Or use webcam for real-time tracking
+visualizer.process_webcam()
+```
+
+#### Advanced Tracking (Better Models)
+```python
+from advanced_tracking import AdvancedPeopleTracker
+
+# Initialize with better models (YOLOv8 Large)
+tracker = AdvancedPeopleTracker(device="mps")  # Use MPS for Apple Silicon
+
+# Process video with enhanced tracking
+tracker.process_video(
+    video_path="path/to/your/video.mp4",
+    output_path="advanced_output.mp4",
+    max_frames=300,
+    show_labels=True  # Show keypoint labels
+)
+```
+
+### Quick Demo
+
+```bash
+# Run interactive demo
+python demo_visualization.py
+
+# Basic tracking
+python visualize_tracking.py --video input.mp4 --output output.mp4
+python visualize_tracking.py --webcam
+
+# Advanced tracking with better models
+python advanced_tracking.py --video input.mp4 --output output.mp4
+python advanced_tracking.py --webcam --no-labels  # Cleaner view
+```
+
 ### Generate Visualization Videos
 
 ```python
@@ -125,13 +182,13 @@ response = analyzer.analyze(kg, "Describe what you see in the video")
 ## 🔧 Configuration
 
 ### Model Paths
-- **YOLO Detection**: `yolov8n.pt` (auto-downloaded)
-- **Pose Estimation**: `models/detector/yolo11n-pose.pt`
+- **YOLO Detection**: `yolov8n.pt` (auto-downloaded) or `models/detector/yolov8l.pt` (better)
+- **Pose Estimation**: `models/detector/yolo11n-pose.pt` (basic) or `models/detector/yolov8l-pose.pt` (better)
 - **LLM Model**: `gemma:2b` (via Ollama)
 
 ### Analysis Parameters
 - `max_seconds`: Maximum video duration to analyze
-- `device`: CPU/GPU for model inference
+- `device`: CPU/GPU/MPS for model inference (use "mps" for Apple Silicon)
 - `confidence_threshold`: Detection confidence (default: 0.5)
 
 ## 📊 Analysis Pipeline
