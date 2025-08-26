@@ -2,7 +2,7 @@
 
 A comprehensive video analysis system that combines computer vision, object tracking, pose estimation, and large language models to answer natural language questions about video content.
 
-./image.jpeg
+![Video QA System](./image.jpeg)
 
 ## 🚀 Features
 
